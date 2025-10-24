@@ -5,6 +5,13 @@ export interface Customer {
   email: string;
 }
 
+export interface Technician {
+  id: string;
+  name: string;
+  specialty: string;
+  phone: string;
+}
+
 export interface Material {
   id: string;
   name: string;
@@ -38,4 +45,5 @@ export interface WorkOrder {
   totalAmount: number;
   status: "draft" | "confirmed" | "in-progress" | "completed";
   createdAt: Date;
+  assignedTechnician?: Technician | null;
 }

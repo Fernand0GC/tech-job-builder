@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Calendar as CalendarIcon, User, FileText } from "lucide-react";
+import { Plus, Calendar as CalendarIcon, User, FileText, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -15,8 +15,9 @@ import { cn } from "@/lib/utils";
 import { CustomerSearch } from "@/components/CustomerSearch";
 import { AddServiceModal } from "@/components/AddServiceModal";
 import { ServiceList } from "@/components/ServiceList";
-import { mockCustomers } from "@/data/mockData";
-import { Customer, Service } from "@/types/order";
+import { OrdersTable } from "@/components/OrdersTable";
+import { mockCustomers, mockTechnicians } from "@/data/mockData";
+import { Customer, Service, WorkOrder } from "@/types/order";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -24,6 +25,7 @@ const Index = () => {
   const [serviceDate, setServiceDate] = useState<Date>();
   const [services, setServices] = useState<Service[]>([]);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [orders, setOrders] = useState<WorkOrder[]>([]);
 
   const handleAddService = (service: Service) => {
     setServices([...services, service]);
@@ -50,6 +52,19 @@ const Index = () => {
       return;
     }
 
+    const newOrder: WorkOrder = {
+      id: `ORD-${Date.now()}`,
+      customer,
+      serviceDate,
+      services: [...services],
+      totalAmount,
+      status: "confirmed",
+      createdAt: new Date(),
+      assignedTechnician: null,
+    };
+
+    setOrders([...orders, newOrder]);
+
     toast.success("¡Orden de trabajo creada exitosamente!", {
       description: `Cliente: ${customer.name} | Fecha: ${format(serviceDate, "PPP", { locale: es })} | Total: €${totalAmount.toFixed(2)}`,
     });
@@ -58,6 +73,21 @@ const Index = () => {
     setCustomer(null);
     setServiceDate(undefined);
     setServices([]);
+  };
+
+  const handleAssignTechnician = (orderId: string, technicianId: string) => {
+    const technician = mockTechnicians.find((t) => t.id === technicianId);
+    if (!technician) return;
+
+    setOrders(
+      orders.map((order) =>
+        order.id === orderId
+          ? { ...order, assignedTechnician: technician }
+          : order
+      )
+    );
+
+    toast.success(`Técnico ${technician.name} asignado a la orden`);
   };
 
   return (
@@ -75,7 +105,21 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 space-y-8">
+        {/* Orders Table */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <ClipboardList className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-semibold">Órdenes de Trabajo Pendientes</h2>
+          </div>
+          <OrdersTable
+            orders={orders}
+            technicians={mockTechnicians}
+            onAssignTechnician={handleAssignTechnician}
+          />
+        </section>
+
+        {/* Order Form */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Left Column - Order Form */}
           <div className="lg:col-span-2 space-y-6">
@@ -212,6 +256,7 @@ const Index = () => {
             </Card>
           </div>
         </div>
+        {/* End Order Form */}
       </main>
 
       {/* Add Service Modal */}

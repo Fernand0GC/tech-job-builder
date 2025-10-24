@@ -1,4 +1,4 @@
-import { Customer, CameraKit, Material } from "@/types/order";
+import { Customer, CameraKit, Material, Technician } from "@/types/order";
 
 export const mockCustomers: Customer[] = [
   { id: "1", name: "Juan Pérez", phone: "+34 612 345 678", email: "juan@email.com" },
@@ -6,6 +6,14 @@ export const mockCustomers: Customer[] = [
   { id: "3", name: "Carlos López", phone: "+34 634 567 890", email: "carlos@email.com" },
   { id: "4", name: "Ana Martínez", phone: "+34 645 678 901", email: "ana@email.com" },
   { id: "5", name: "Luis Rodríguez", phone: "+34 656 789 012", email: "luis@email.com" },
+];
+
+export const mockTechnicians: Technician[] = [
+  { id: "t1", name: "Roberto Sánchez", specialty: "Cámaras de Seguridad", phone: "+34 611 222 333" },
+  { id: "t2", name: "Carmen Ruiz", specialty: "Redes y Conectividad", phone: "+34 622 333 444" },
+  { id: "t3", name: "Miguel Torres", specialty: "Servidores", phone: "+34 633 444 555" },
+  { id: "t4", name: "Laura Fernández", specialty: "Software", phone: "+34 644 555 666" },
+  { id: "t5", name: "David Jiménez", specialty: "Cámaras de Seguridad", phone: "+34 655 666 777" },
 ];
 
 export const cameraKits: CameraKit[] = [
