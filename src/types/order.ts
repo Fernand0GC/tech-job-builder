@@ -10,6 +10,9 @@ export interface Technician {
   name: string;
   specialty: string;
   phone: string;
+  soloCommission: number; // Percentage
+  groupCommission: number; // Percentage
+  isAvailable: boolean;
 }
 
 export interface Material {
@@ -43,7 +46,9 @@ export interface WorkOrder {
   serviceDate: Date | null;
   services: Service[];
   totalAmount: number;
-  status: "draft" | "confirmed" | "in-progress" | "completed";
+  status: "pending" | "in-progress" | "paused" | "completed";
   createdAt: Date;
-  assignedTechnician?: Technician | null;
+  assignedTechnicians: Technician[];
+  initialObservations?: string;
+  technicianObservations?: string;
 }

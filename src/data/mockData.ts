@@ -9,11 +9,11 @@ export const mockCustomers: Customer[] = [
 ];
 
 export const mockTechnicians: Technician[] = [
-  { id: "t1", name: "Roberto Sánchez", specialty: "Cámaras de Seguridad", phone: "+34 611 222 333" },
-  { id: "t2", name: "Carmen Ruiz", specialty: "Redes y Conectividad", phone: "+34 622 333 444" },
-  { id: "t3", name: "Miguel Torres", specialty: "Servidores", phone: "+34 633 444 555" },
-  { id: "t4", name: "Laura Fernández", specialty: "Software", phone: "+34 644 555 666" },
-  { id: "t5", name: "David Jiménez", specialty: "Cámaras de Seguridad", phone: "+34 655 666 777" },
+  { id: "t1", name: "Roberto Sánchez", specialty: "Cámaras de Seguridad", phone: "+34 611 222 333", soloCommission: 15, groupCommission: 10, isAvailable: true },
+  { id: "t2", name: "Carmen Ruiz", specialty: "Redes y Conectividad", phone: "+34 622 333 444", soloCommission: 15, groupCommission: 10, isAvailable: true },
+  { id: "t3", name: "Miguel Torres", specialty: "Servidores", phone: "+34 633 444 555", soloCommission: 15, groupCommission: 10, isAvailable: false },
+  { id: "t4", name: "Laura Fernández", specialty: "Software", phone: "+34 644 555 666", soloCommission: 15, groupCommission: 10, isAvailable: true },
+  { id: "t5", name: "David Jiménez", specialty: "Cámaras de Seguridad", phone: "+34 655 666 777", soloCommission: 15, groupCommission: 10, isAvailable: true },
 ];
 
 export const cameraKits: CameraKit[] = [
@@ -72,9 +72,16 @@ export const serviceTypes = [
   { id: "network", name: "Redes y Conectividad" },
   { id: "servers", name: "Servidores" },
   { id: "software", name: "Software" },
+  { id: "air-conditioning", name: "Aires Acondicionados" },
+  { id: "electric-gates", name: "Portones Eléctricos" },
+  { id: "electric-fences", name: "Vallas Eléctricas" },
+  { id: "smart-locks", name: "Chapas Inteligentes" },
+  { id: "electronics", name: "Electrónica" },
+  { id: "washing-machines", name: "Lavadoras" },
+  { id: "refrigerators", name: "Refrigeradores" },
 ];
 
-export const serviceCategories = {
+export const serviceCategories: Record<string, { id: string; name: string }[]> = {
   cameras: [
     { id: "installation", name: "Instalación" },
     { id: "maintenance", name: "Mantenimiento" },
@@ -94,5 +101,38 @@ export const serviceCategories = {
     { id: "installation", name: "Instalación" },
     { id: "update", name: "Actualización" },
     { id: "support", name: "Soporte Técnico" },
+  ],
+  "air-conditioning": [
+    { id: "installation", name: "Instalación" },
+    { id: "maintenance", name: "Mantenimiento" },
+    { id: "repair", name: "Reparación" },
+  ],
+  "electric-gates": [
+    { id: "installation", name: "Instalación" },
+    { id: "maintenance", name: "Mantenimiento" },
+    { id: "repair", name: "Reparación" },
+  ],
+  "electric-fences": [
+    { id: "installation", name: "Instalación" },
+    { id: "maintenance", name: "Mantenimiento" },
+    { id: "repair", name: "Reparación" },
+  ],
+  "smart-locks": [
+    { id: "installation", name: "Instalación" },
+    { id: "maintenance", name: "Mantenimiento" },
+    { id: "repair", name: "Reparación" },
+  ],
+  electronics: [
+    { id: "installation", name: "Instalación" },
+    { id: "maintenance", name: "Mantenimiento" },
+    { id: "repair", name: "Reparación" },
+  ],
+  "washing-machines": [
+    { id: "maintenance", name: "Mantenimiento" },
+    { id: "repair", name: "Reparación" },
+  ],
+  refrigerators: [
+    { id: "maintenance", name: "Mantenimiento" },
+    { id: "repair", name: "Reparación" },
   ],
 };

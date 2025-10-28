@@ -16,6 +16,9 @@ import { CustomerSearch } from "@/components/CustomerSearch";
 import { AddServiceModal } from "@/components/AddServiceModal";
 import { ServiceList } from "@/components/ServiceList";
 import { OrdersTable } from "@/components/OrdersTable";
+import { DashboardStats } from "@/components/DashboardStats";
+import { EditOrderModal } from "@/components/EditOrderModal";
+import { Textarea } from "@/components/ui/textarea";
 import { mockCustomers, mockTechnicians } from "@/data/mockData";
 import { Customer, Service, WorkOrder } from "@/types/order";
 import { toast } from "sonner";
@@ -26,6 +29,9 @@ const Index = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [orders, setOrders] = useState<WorkOrder[]>([]);
+  const [editingOrder, setEditingOrder] = useState<WorkOrder | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [initialObservations, setInitialObservations] = useState("");
 
   const handleAddService = (service: Service) => {
     setServices([...services, service]);
@@ -58,9 +64,11 @@ const Index = () => {
       serviceDate,
       services: [...services],
       totalAmount,
-      status: "confirmed",
+      status: "pending",
       createdAt: new Date(),
-      assignedTechnician: null,
+      assignedTechnicians: [],
+      initialObservations,
+      technicianObservations: "",
     };
 
     setOrders([...orders, newOrder]);
@@ -73,22 +81,20 @@ const Index = () => {
     setCustomer(null);
     setServiceDate(undefined);
     setServices([]);
+    setInitialObservations("");
   };
 
-  const handleAssignTechnician = (orderId: string, technicianId: string) => {
-    const technician = mockTechnicians.find((t) => t.id === technicianId);
-    if (!technician) return;
-
-    setOrders(
-      orders.map((order) =>
-        order.id === orderId
-          ? { ...order, assignedTechnician: technician }
-          : order
-      )
-    );
-
-    toast.success(`Técnico ${technician.name} asignado a la orden`);
+  const handleEditOrder = (order: WorkOrder) => {
+    setEditingOrder(order);
+    setIsEditModalOpen(true);
   };
+
+  const handleUpdateOrder = (updatedOrder: WorkOrder) => {
+    setOrders(orders.map((order) => (order.id === updatedOrder.id ? updatedOrder : order)));
+    toast.success("Orden actualizada exitosamente");
+  };
+
+  const pendingOrders = orders.filter((order) => order.status === "pending");
 
   return (
     <div className="min-h-screen bg-background">
@@ -106,17 +112,16 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 space-y-8">
+        {/* Dashboard Stats */}
+        <DashboardStats orders={orders} technicians={mockTechnicians} />
+
         {/* Orders Table */}
         <section>
           <div className="flex items-center gap-2 mb-4">
             <ClipboardList className="h-6 w-6 text-primary" />
             <h2 className="text-2xl font-semibold">Órdenes de Trabajo Pendientes</h2>
           </div>
-          <OrdersTable
-            orders={orders}
-            technicians={mockTechnicians}
-            onAssignTechnician={handleAssignTechnician}
-          />
+          <OrdersTable orders={pendingOrders} onEditOrder={handleEditOrder} />
         </section>
 
         {/* Order Form */}
@@ -197,6 +202,17 @@ const Index = () => {
                     onRemoveService={handleRemoveService}
                   />
                 </div>
+
+                {/* Initial Observations */}
+                <div className="space-y-2">
+                  <Label>Observaciones Iniciales</Label>
+                  <Textarea
+                    value={initialObservations}
+                    onChange={(e) => setInitialObservations(e.target.value)}
+                    placeholder="Notas o detalles especiales sobre el trabajo..."
+                    className="min-h-[100px] bg-background"
+                  />
+                </div>
               </div>
             </Card>
           </div>
@@ -264,6 +280,15 @@ const Index = () => {
         open={isServiceModalOpen}
         onOpenChange={setIsServiceModalOpen}
         onAddService={handleAddService}
+      />
+
+      {/* Edit Order Modal */}
+      <EditOrderModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        order={editingOrder}
+        technicians={mockTechnicians}
+        onUpdateOrder={handleUpdateOrder}
       />
     </div>
   );

@@ -1,14 +1,7 @@
-import { WorkOrder, Technician } from "@/types/order";
+import { WorkOrder } from "@/types/order";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -19,22 +12,21 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar, User, Package, Euro, UserCog } from "lucide-react";
+import { Calendar, User, Package, Euro, Edit } from "lucide-react";
 
 interface OrdersTableProps {
   orders: WorkOrder[];
-  technicians: Technician[];
-  onAssignTechnician: (orderId: string, technicianId: string) => void;
+  onEditOrder: (order: WorkOrder) => void;
 }
 
 const statusConfig = {
-  draft: { label: "Borrador", variant: "secondary" as const },
-  confirmed: { label: "Confirmada", variant: "default" as const },
+  pending: { label: "Pendiente", variant: "secondary" as const },
   "in-progress": { label: "En Progreso", variant: "default" as const },
-  completed: { label: "Completada", variant: "outline" as const },
+  paused: { label: "Pausada", variant: "outline" as const },
+  completed: { label: "Finalizado", variant: "default" as const },
 };
 
-export const OrdersTable = ({ orders, technicians, onAssignTechnician }: OrdersTableProps) => {
+export const OrdersTable = ({ orders, onEditOrder }: OrdersTableProps) => {
   if (orders.length === 0) {
     return (
       <Card className="p-8 text-center bg-card">
@@ -56,7 +48,8 @@ export const OrdersTable = ({ orders, technicians, onAssignTechnician }: OrdersT
               <TableHead>Servicios</TableHead>
               <TableHead>Total</TableHead>
               <TableHead>Estado</TableHead>
-              <TableHead>Técnico Asignado</TableHead>
+              <TableHead>Técnicos</TableHead>
+              <TableHead>Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -94,35 +87,27 @@ export const OrdersTable = ({ orders, technicians, onAssignTechnician }: OrdersT
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Select
-                    value={order.assignedTechnician?.id || ""}
-                    onValueChange={(value) => onAssignTechnician(order.id, value)}
+                  <div className="flex flex-col gap-1">
+                    {order.assignedTechnicians.length > 0 ? (
+                      order.assignedTechnicians.map((tech) => (
+                        <Badge key={tech.id} variant="outline" className="text-xs">
+                          {tech.name}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-sm text-muted-foreground">Sin asignar</span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onEditOrder(order)}
+                    className="hover:bg-secondary"
                   >
-                    <SelectTrigger className="w-[200px] h-9">
-                      <SelectValue placeholder="Asignar técnico">
-                        {order.assignedTechnician ? (
-                          <div className="flex items-center gap-2">
-                            <UserCog className="h-4 w-4" />
-                            <span className="truncate">{order.assignedTechnician.name}</span>
-                          </div>
-                        ) : (
-                          "Asignar técnico"
-                        )}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {technicians.map((tech) => (
-                        <SelectItem key={tech.id} value={tech.id}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{tech.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {tech.specialty}
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    <Edit className="h-4 w-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
