@@ -40,15 +40,26 @@ export interface Service {
   totalPrice: number;
 }
 
+export interface TechnicianHistoryEntry {
+  id: string;
+  technician: Technician;
+  assignedAt: Date;
+  removedAt?: Date;
+  removedReason?: string;
+}
+
 export interface WorkOrder {
   id: string;
   customer: Customer | null;
   serviceDate: Date | null;
   services: Service[];
+  extraMaterials: Material[];
   totalAmount: number;
+  manualTotalAmount?: number;
   status: "pending" | "in-progress" | "paused" | "completed";
   createdAt: Date;
   assignedTechnicians: Technician[];
+  technicianHistory: TechnicianHistoryEntry[];
   initialObservations?: string;
   technicianObservations?: string;
 }
